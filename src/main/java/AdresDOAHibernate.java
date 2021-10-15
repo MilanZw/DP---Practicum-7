@@ -33,7 +33,7 @@ public class AdresDOAHibernate implements AdresDOA {
         Session session = HibernateUtil.startTransaction();
         Query deleteRowQuery = session.createQuery("delete from adres as a where a.id = :id");
         deleteRowQuery.setParameter("id", adres.getId());
-        System.out.println(deleteRowQuery.executeUpdate());
+        deleteRowQuery.executeUpdate();
         HibernateUtil.endTransaction();
         return true;
     }
