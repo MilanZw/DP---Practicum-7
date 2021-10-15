@@ -253,6 +253,7 @@ public class main {
 
         Random rd = new Random();
         Integer testProductId = rd.nextInt(400)+100;
+        Integer testChipkaartId = rd.nextInt(400)+100;
         Product newProduct = new Product(testProductId, "Test Product #"+testProductId, "Dit product is hier om te testen!", 20.0, null, null);
 
         // Maak een nieuw product aan
@@ -263,28 +264,33 @@ public class main {
         if (pdao.findAll().size() != products.size()+1)
             System.out.println("[Test] Succesvol een nieuw product aangemaakt!");
 
-        OVChipkaart chipkaart = cdao.findAll().get(0);
+        // Voeg een nieuwe chipkaart toe
+        Reiziger parentAddOv = rdao.findAll().get(0);
+        OVChipkaart newChip = new OVChipkaart(testChipkaartId, Date.valueOf("2020-10-31"), 2, 30.0f, parentAddOv);
+        parentAddOv.addChipkaart(newChip);
+        if (!cdao.save(newChip)) System.out.println("[Test] Gefaald om de nieuwe ovchipkaart toe te voegen!");
+        else System.out.println("[Test] Succesvol een nieuwe test chipkaart gemaakt voor "+parentAddOv.getNaam()+" om de producten aan toe te voegen!");
 
-        chipkaart.addProduct(newProduct);
-        if (!cdao.update(chipkaart))
+        newChip.addProduct(newProduct);
+        if (!cdao.update(newChip))
             throw new RuntimeException("[Test] Gefaald met het toevoegen van het product!");
         System.out.println("[Test] Het product is succesvol toegevoegd aan de nieuwe chipkaart!");
 
         // Probeer de chipkaart te vinden via het product
-        if (pdao.findByOVChipkaart(chipkaart).size() == 0)
+        if (pdao.findByOVChipkaart(newChip).size() == 0)
             throw new RuntimeException("[Test] Gefaald met het ophalen van de chipkaart via het product.");
 
         // Bewerk bestaand product
-        Product editProduct = pdao.findByOVChipkaart(chipkaart).get(0);
+        Product editProduct = pdao.findByOVChipkaart(newChip).get(0);
         editProduct.setNaam("Nieuwe Naam");
         if (!pdao.update(editProduct))
             throw new RuntimeException("[Test] Kon het product niet bewerken.");
 
-        if (pdao.findByOVChipkaart(chipkaart).get(0).getNaam().equals("Nieuwe Naam"))
+        if (pdao.findByOVChipkaart(newChip).get(0).getNaam().equals("Nieuwe Naam"))
             System.out.println("[Test] Product is succesvol bewerkt!");
 
-        // Verwijder chipkaart en daarbij ook alle producten die de chipkaart had
-        if (!cdao.delete(chipkaart))
+        // Verwijder de test chipkaart en daarbij ook alle producten die de chipkaart had
+        if (!cdao.delete(newChip))
             throw new RuntimeException("[Test] Gefaald met het verwijderen van de chipkaart en daarmee ook de relaties naar het product!");
         System.out.println("[Test] De chipkaart is weer succesvol verwijderd!");
 

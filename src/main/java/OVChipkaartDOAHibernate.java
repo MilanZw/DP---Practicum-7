@@ -34,6 +34,18 @@ public class OVChipkaartDOAHibernate implements OVChipkaartDOA {
     }
 
     @Override
+    public List<OVChipkaart> findAllWithProduct(Product product) {
+        Session session = HibernateUtil.startTransaction();
+
+        Query<OVChipkaart> chipkaartsQuery = session.createQuery("select o from ov_chipkaart as o inner join o.products as p where p.id = :product_nummer", OVChipkaart.class);
+        chipkaartsQuery.setParameter("product_nummer", product.getId());
+        List<OVChipkaart> chipkaarts = chipkaartsQuery.list();
+
+        HibernateUtil.endTransaction();
+        return chipkaarts;
+    }
+
+    @Override
     public List<OVChipkaart> findByReiziger(Reiziger reiziger) {
         Session session = HibernateUtil.startTransaction();
 

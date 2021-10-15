@@ -36,17 +36,12 @@ public class ProductDOAHibernate implements ProductDOA {
     public List<Product> findByOVChipkaart(OVChipkaart chipkaart) {
         Session session = HibernateUtil.startTransaction();
 
-        ArrayList<Product> filteredProductsList = new ArrayList<>();
-        for (Product prod : session.createQuery("from product", Product.class).list()) {
-            for (OVChipkaart chip : prod.getChipkaarts()) {
-                if (chip.equals(chipkaart)) {
-                    filteredProductsList.add(prod);
-                }
-            }
-        }
+        Query<Product> productsQuery = session.createQuery("select p from product as p inner join p.ovChipkaarts as c where c.kaart_nummer = :kaart_nummer", Product.class);
+        productsQuery.setParameter("kaart_nummer", chipkaart.getKaartNummer());
+        List<Product> products = productsQuery.list();
 
         HibernateUtil.endTransaction();
-        return filteredProductsList;
+        return products;
     }
 
     @Override

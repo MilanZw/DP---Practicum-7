@@ -6,7 +6,8 @@ public interface OVChipkaartDOA {
     boolean save(OVChipkaart chipkaart);
     boolean update(OVChipkaart chipkaart);
     boolean delete(OVChipkaart chipkaart);
-    
+
+    List<OVChipkaart> findAllWithProduct(Product product);
     List<OVChipkaart> findByReiziger(Reiziger reiziger);
     List<OVChipkaart> findAll() throws SQLException;
 }
